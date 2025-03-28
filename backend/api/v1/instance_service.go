@@ -297,7 +297,8 @@ func (s *InstanceService) CreateInstance(ctx context.Context, request *v1pb.Crea
 				driver, err := s.dbFactory.GetDataSourceDriver(
 					ctx, instanceMessage, ds,
 					db.ConnectionContext{
-						ReadOnly: ds.GetType() == storepb.DataSourceType_READ_ONLY,
+						ReadOnly:             ds.GetType() == storepb.DataSourceType_READ_ONLY,
+						OperationalComponent: "test-connection",
 					},
 				)
 				if err != nil {
@@ -665,7 +666,8 @@ func (s *InstanceService) AddDataSource(ctx context.Context, request *v1pb.AddDa
 			driver, err := s.dbFactory.GetDataSourceDriver(
 				ctx, instance, dataSource,
 				db.ConnectionContext{
-					ReadOnly: dataSource.GetType() == storepb.DataSourceType_READ_ONLY,
+					ReadOnly:             dataSource.GetType() == storepb.DataSourceType_READ_ONLY,
+					OperationalComponent: "test-connection",
 				},
 			)
 			if err != nil {
@@ -848,7 +850,10 @@ func (s *InstanceService) UpdateDataSource(ctx context.Context, request *v1pb.Up
 		err := func() error {
 			driver, err := s.dbFactory.GetDataSourceDriver(
 				ctx, instance, dataSource,
-				db.ConnectionContext{ReadOnly: dataSource.GetType() == storepb.DataSourceType_READ_ONLY},
+				db.ConnectionContext{
+					ReadOnly:             dataSource.GetType() == storepb.DataSourceType_READ_ONLY,
+					OperationalComponent: "test-connection",
+				},
 			)
 			if err != nil {
 				return status.Errorf(codes.Internal, "failed to get database driver with error: %v", err.Error())
